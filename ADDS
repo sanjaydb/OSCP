@@ -1,7 +1,63 @@
 THM
 ---
-{
 
+
+Scanning Ports
+---------------
+{
+    nmap -sV -sC -A -T4 10.10.238.170 -oN nmap.out
+    {
+        -sV = Version Detection
+        -sC = use default NSE scripts
+        -A  = enable Aggressive mode, OS Verion detction, traceroutr, script scanning
+        -T4 = scanning speed to mode 4
+        -oN = Save to file
+        
+        {
+            * Port 139: 
+                        SMB originally ran on top of NetBIOS using port 139. NetBIOS is an older        
+                        transport layer that allows Windows computers to talk to each other on the same network.
+            
+            * Port 445: 
+                        Later versions of SMB (after Windows 2000) began to use port 445 on top of a TCP stack. Using TCP allows SMB to work over the internet.
+            
+            * Port 389: 
+                        And also we have LDAP on 389/tcp and 3268/tcp
+            
+            * Port 3268: 
+                        LDAP
+        }
+    }
+
+}
+
+enum4linux
+----------
+{
+    By using this tool we can identify share information, users and user group information, DNS information, Identifying the remote operating system, RID cycling, Password policy retrieval, NetBIOS information, etc
+
+    # enum4linux 10.10.10.10 
+    {
+        // Domain Name  = NetBios Name
+        // in the domain name 'google.com', '.com' is the TLD
+        // .local is invalid TLD
+
+    }
+
+    //add the target domain to my /etc/hosts it will be easy for me to conduct the enumeration.
+
+    # echo "10.10.238.170 spookysec.local" | sudo tee -a /etc/hosts
+
+    kerbrute >> echo "10.10.238.170 spookysec.local" | sudo tee -a /etc/hosts 10.10.238.170 spookysec.local
+
+./ apt-get install kerbrute
+
+# ./kerbrute usernum --dc spookysec.local -d spookysec.local userlist.txt
+
+* --dc <= location of the Domain Controller(KDC)
+* -d <= full domain
 
 
 }
+
+
