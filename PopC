@@ -1,0 +1,102 @@
+
+# nmap -sV -sC -oA nmap.nmap 10.10.10.6
+# less nmap.nmp
+# firefox http://10.10.10.6  <- standard Apache Page 
+# Start Burbsuite -> Turn ofn Proxy 
+# firefox http://10.10.10.6  <- standard Apache Page 
+    burbsuite -> Intercept -> change 
+    {
+      HOST:10.10.10.6 to HOST: popcorn.htb => this is done for verfying virual host routing.If it here
+                                it will move to diffrent location .
+    }
+ # dirb http://10.10.10.6 -r -o tmp.dir
+ # less tmp.dir => will list pages hosted on it.
+      -> http://popcorm.htm/test
+          {
+              used for version information and path where files and most important where
+              PHP scripts are chached.
+          }
+      -> http://popcron.htm/torrent  <- Traget Page .
+      {
+        
+      }
+ # searchsploit "torrent hoster" 
+ # searchsploit -x 11746.txt 
+ # vi 11746.txt -> no date info 
+    -> so search in exploit-db.com -> date 2010 
+    -> verfiy date on the portal copyright is 2007
+ 
+ // check upload 
+ // Require username and appsword try ADmin, ADmin
+ // Ativate Burb suite -> "intercept" set to on "
+ // capture login admin, admin request 
+ // copy the request from burb "intercpet"
+ // and paste in sqlmap , as it takes while 
+ // we can keep this on background as it take lot of time 
+ 
+ # vi login.req
+    {
+      paste request headr from burb suite , remove space ,save it.
+    }
+ 
+ Not required -> # sqlmap -r login.req --level 5 --risk 3
+  { y,y,y and wait for result }
+ 
+ # firefox http://ip/users/index.php -> create new user / reqister new user .
+ // login with new user , find upload 
+ //upload image file -> to verify if it working 
+ // Error : not a torrent file .
+ // download kali.torrent file and upload it. 
+ // its got uploaded.
+ // in bursuite apply filter for scope 
+ // Target -> right click and select the ip "rightclick -> Add to scope "
+ // target -> site map -> select "show only the in-scaope items" 
+ // select "Proxy" -> select "HTTP history" , select "show only in-scope itesm"
+ // sort by "POST" request , as we wanted to check POST request only .
+ // now the scope is resticted. 
+ // the torrent file is uploaded.
+ // check where images are uploaded 
+ // now try to exploit image upload direct with
+ 
+ * // now try to upload PHP script .
+   // Upload php error. 
+   // Go to Burb -> request 
+   // in burb go to Content-Disposition: form-data; name='file'; filenmae='logo.png'
+   // content-type: image/png
+   // Send to repater Ctr + R 
+   // copy the png header 
+   // # echo /asdasqewqeqwqwe | base64 -s > aaa.png  <-for file command.
+   // # file aaa.png
+   // change filename in repetror as 'long.png.php' 
+    // copy some of the image header and php shell  then we can upoad php file .
+   // check with "file" command form linux.
+   // got ot image upload dir and execute logo.png.php
+   // we can get reverse shell 
+   // # cd /opt/shell/python-pty-shell < - download it from github 
+   // use tcp_pty_backconnect.py  <- chnage ip 
+   // # python -m SimpleHttpServer
+   // 
+   
+   
+ 
+ 
+ 
+ 
+ 
+ // 
+ 
+ 
+ 
+ 
+ 
+    
+    
+ 
+    
+ 
+ {
+ 
+ 
+ }
+
+
